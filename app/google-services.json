@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1092451759165",
+    "firebase_url": "https://moviedb-817ab.firebaseio.com",
+    "project_id": "moviedb-817ab",
+    "storage_bucket": "moviedb-817ab.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1092451759165:android:f747c80cd9380eab42e654",
+        "android_client_info": {
+          "package_name": "com.mkttestprojects.moviedbwithdagger"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1092451759165-gvdc30ucr7aoe5utlkp4ehoe09gamuki.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB_pf0xcY8NIl5yCu3ma5d3Fir9FYvrCgk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1092451759165-gvdc30ucr7aoe5utlkp4ehoe09gamuki.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

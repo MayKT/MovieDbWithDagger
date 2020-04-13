@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/color_black"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            >
+            <EditText
+                android:id="@+id/et_search"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_margin="8dp"
+                android:background="@drawable/edittext_bg"
+                android:drawableLeft="@drawable/search1"
+                android:drawablePadding="10dp"
+                android:hint="Search"
+                android:inputType="text"
+                android:textColor="@color/colorwhite"
+                android:textColorHint="@color/colorwhite"
+                android:alpha="0.7"></EditText>
+
+            <ImageView
+                android:id="@+id/ibtn_close"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_alignRight="@id/et_search"
+                android:layout_marginTop="12dp"
+                android:layout_marginRight="4dp"
+                android:src="@drawable/close1"
+                />
+
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/txt_search"
+            android:layout_width="match_parent"
+            android:layout_height="25dp"
+            android:background="@color/colorDimGray"
+            android:gravity="center_vertical"
+            android:text="Movies and TV"
+            android:textColor="@color/colorwhite"
+            android:textSize="15sp"
+            android:alpha="0.7"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_search_result_items"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp" />
+
+
+    </LinearLayout>
+
+
+</FrameLayout>

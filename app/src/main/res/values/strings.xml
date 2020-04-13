@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">MovieDbWithDagger</string>
+    <string name="Trending_Movies" >Trending</string>
+    <string name="Now_Playing">Now Playing</string>
+    <string name="upcoming">Upcoming</string>
+    <string name="top_rated">Top Rated</string>
+    <string name="Play">Play</string>
+    <string name="mylist">My List</string>
+    <string name="rate">Rate</string>
+    <string name="facebook_app_id">231952048224162</string>
+    <string name="fb_login_protocol_scheme">fb231952048224162</string>
+
 </resources>
