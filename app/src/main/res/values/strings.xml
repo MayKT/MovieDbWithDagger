@@ -5,9 +5,20 @@
     <string name="upcoming">Upcoming</string>
     <string name="top_rated">Top Rated</string>
     <string name="Play">Play</string>
-    <string name="mylist">My List</string>
+
     <string name="rate">Rate</string>
     <string name="facebook_app_id">231952048224162</string>
     <string name="fb_login_protocol_scheme">fb231952048224162</string>
+    <string name="please_fill_username">Please fill username.</string>
+    <string name="please_fill_password">Please fill password.</string>
+    <string name="logout">Logout</string>
+    <string name="signin">Signin</string>
+    <string name="my_watchlist">My WatchList</string>
+    <string name="rated_movies">Rated Movies</string>
+    <string name="login">Login</string>
+    <string name="home">Home</string>
+    <string name="search">Search</string>
+    <string name="mylist">My List</string>
+    <string name="profile">Profile</string>
 
 </resources>

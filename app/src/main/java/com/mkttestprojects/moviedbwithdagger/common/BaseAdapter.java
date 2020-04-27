@@ -1,4 +1,4 @@
-package com.mkttestprojects.moviedbwithdagger;
+package com.mkttestprojects.moviedbwithdagger.common;
 
 import android.content.Context;
 import android.util.Log;
@@ -11,6 +11,9 @@ import androidx.annotation.IdRes;
 import androidx.annotation.LayoutRes;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.mkttestprojects.moviedbwithdagger.models.Pageable;
+
 import java.util.ArrayList;
 import java.util.List;
 

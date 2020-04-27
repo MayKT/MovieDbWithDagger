@@ -1,7 +1,5 @@
 package com.mkttestprojects.moviedbwithdagger.models;
 
-import com.mkttestprojects.moviedbwithdagger.Pageable;
-
 import java.io.Serializable;
 
 public class MovieListInfo implements Serializable, Pageable {

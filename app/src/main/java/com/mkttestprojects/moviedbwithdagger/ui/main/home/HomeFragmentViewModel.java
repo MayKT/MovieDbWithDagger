@@ -33,7 +33,7 @@ public class HomeFragmentViewModel extends ViewModel {
     }
 
     public LiveData<Resource<MovieListModel>> observeNowPlayingMovieLists() {
-        if (nowPlayingMovieLists == null) {
+
             nowPlayingMovieLists = new MediatorLiveData<>();
             nowPlayingMovieLists.setValue(Resource.loading(null));
             final LiveData<Resource<MovieListModel>> resourceLiveData = LiveDataReactiveStreams.fromPublisher(
@@ -66,12 +66,12 @@ public class HomeFragmentViewModel extends ViewModel {
                     nowPlayingMovieLists.removeSource(resourceLiveData);
                 }
             });
-        }
+
         return nowPlayingMovieLists;
     }
 
     public LiveData<Resource<MovieListModel>> observeTrendingMovieLists() {
-        if (trendingMovieLists == null) {
+
             trendingMovieLists = new MediatorLiveData<>();
             trendingMovieLists.setValue(Resource.loading(null));
             final LiveData<Resource<MovieListModel>> resourceLiveData = LiveDataReactiveStreams.fromPublisher(
@@ -104,12 +104,12 @@ public class HomeFragmentViewModel extends ViewModel {
                     trendingMovieLists.removeSource(resourceLiveData);
                 }
             });
-        }
+
         return trendingMovieLists;
     }
 
     public LiveData<Resource<MovieListModel>> observeUpcominMovieLists() {
-        if (upcomingMovieLists == null) {
+
             upcomingMovieLists = new MediatorLiveData<>();
             upcomingMovieLists.setValue(Resource.loading(null));
             final LiveData<Resource<MovieListModel>> resourceLiveData = LiveDataReactiveStreams.fromPublisher(
@@ -142,12 +142,12 @@ public class HomeFragmentViewModel extends ViewModel {
                     upcomingMovieLists.removeSource(resourceLiveData);
                 }
             });
-        }
+
         return upcomingMovieLists;
     }
 
     public LiveData<Resource<MovieListModel>> observeTopRatedMovieLists() {
-        if (topRatedMovieLists == null) {
+
             topRatedMovieLists = new MediatorLiveData<>();
             topRatedMovieLists.setValue(Resource.loading(null));
             final LiveData<Resource<MovieListModel>> resourceLiveData = LiveDataReactiveStreams.fromPublisher(
@@ -180,7 +180,7 @@ public class HomeFragmentViewModel extends ViewModel {
                     topRatedMovieLists.removeSource(resourceLiveData);
                 }
             });
-        }
+
         return topRatedMovieLists;
     }
 }

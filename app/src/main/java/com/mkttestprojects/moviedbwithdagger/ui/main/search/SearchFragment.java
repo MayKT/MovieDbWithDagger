@@ -4,19 +4,16 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
-import com.mkttestprojects.moviedbwithdagger.BaseFragment;
+import com.mkttestprojects.moviedbwithdagger.common.BaseFragment;
 import com.mkttestprojects.moviedbwithdagger.R;
 import com.mkttestprojects.moviedbwithdagger.models.MovieListInfo;
 import com.mkttestprojects.moviedbwithdagger.models.MovieListModel;
@@ -99,7 +96,6 @@ public class SearchFragment extends BaseFragment {
             etSearch.setText("");
             adapter.clear();
         });
-
     }
 
     private void getSearchResults(String search) {

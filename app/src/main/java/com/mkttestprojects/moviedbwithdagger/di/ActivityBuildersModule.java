@@ -12,6 +12,7 @@ import com.mkttestprojects.moviedbwithdagger.di.movietrailer.MovieTrailerModule;
 import com.mkttestprojects.moviedbwithdagger.di.movietrailer.MovieTrailerScope;
 import com.mkttestprojects.moviedbwithdagger.di.movietrailer.MovieTrailerViewModelModule;
 import com.mkttestprojects.moviedbwithdagger.ui.firebaselogin.FirebaseLoginActivity;
+import com.mkttestprojects.moviedbwithdagger.ui.firebasemain.FireBaseMainActivity;
 import com.mkttestprojects.moviedbwithdagger.ui.login.LoginActivity;
 import com.mkttestprojects.moviedbwithdagger.ui.main.MainActivity;
 import com.mkttestprojects.moviedbwithdagger.ui.moviedetail.MovieDetailActivity;
@@ -58,4 +59,7 @@ public abstract  class ActivityBuildersModule {
 
     @ContributesAndroidInjector
     abstract FirebaseLoginActivity contributeFirebaseLoginActivity();
+
+    @ContributesAndroidInjector
+    abstract FireBaseMainActivity contributeFirebaseMainActivity();
 }

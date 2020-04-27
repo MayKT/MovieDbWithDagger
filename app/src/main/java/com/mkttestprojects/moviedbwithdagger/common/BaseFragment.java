@@ -1,4 +1,4 @@
-package com.mkttestprojects.moviedbwithdagger;
+package com.mkttestprojects.moviedbwithdagger.common;
 
 import android.content.Context;
 import android.os.Bundle;

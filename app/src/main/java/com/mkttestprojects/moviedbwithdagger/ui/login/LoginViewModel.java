@@ -4,12 +4,16 @@ import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.LiveDataReactiveStreams;
+import androidx.lifecycle.MediatorLiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
-import com.mkttestprojects.moviedbwithdagger.SessionManager;
+
 import com.mkttestprojects.moviedbwithdagger.models.LoginModel;
 import com.mkttestprojects.moviedbwithdagger.models.LoginRequestBody;
 import com.mkttestprojects.moviedbwithdagger.models.RequestTokenBody;
 import com.mkttestprojects.moviedbwithdagger.network.login.LoginApi;
+import com.mkttestprojects.moviedbwithdagger.ui.main.Resource;
+
 import javax.inject.Inject;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
@@ -20,9 +24,11 @@ public class LoginViewModel extends ViewModel {
 
     private static final String TAG = "LoginViewModel";
 
-    private SessionManager sessionManager;
-
     private LoginApi loginApi;
+
+    private MediatorLiveData<Resource<LoginModel>> requestToken;
+    private MediatorLiveData<Resource<LoginModel>> loginvalidate;
+    private MediatorLiveData<Resource<LoginModel>> sessionId;
 
     @Inject
     public LoginViewModel(LoginApi loginApi) {
@@ -30,95 +36,100 @@ public class LoginViewModel extends ViewModel {
         Log.e(TAG, "LoginViewModel: view model is working");
     }
 
-    public void onClickLogin(String username, String pwd) {
-
-        if (username.length() == 0) {
-//            Toast.makeText(this,"Please fill username",Toast.LENGTH_SHORT).show();
-            return;
-        } else if (pwd.length() == 0) {
-//            Toast.makeText(this,"Please fill password",Toast.LENGTH_SHORT).show();
-            return;
-        } else {
-            getRequestToken(username, pwd);
-        }
-    }
-
-    public LiveData<LoginResource<LoginModel>> getRequestToken(String username, String pwd) {
-
-
-       return null;
-    }
-
-    public LiveData<LoginResource<LoginModel>> getSessionId(String requestToken) {
-        return LiveDataReactiveStreams.fromPublisher(loginApi.getSession(DEVELOPER_KEY, new RequestTokenBody(requestToken))
+   public LiveData<Resource<LoginModel>> observeRequestToken(String username,String pwd){
+        requestToken = new MediatorLiveData<>();
+        requestToken.setValue(Resource.loading(null));
+        final LiveData<Resource<LoginModel>> resourceLiveData = LiveDataReactiveStreams.fromPublisher(
+                loginApi.getRequestToken(DEVELOPER_KEY)
                 .onErrorReturn(new Function<Throwable, LoginModel>() {
                     @Override
                     public LoginModel apply(Throwable throwable) throws Exception {
                         return null;
                     }
                 })
-                .map(new Function<LoginModel, LoginResource<LoginModel>>() {
+                .map(new Function<LoginModel, Resource<LoginModel>>() {
                     @Override
-                    public LoginResource<LoginModel> apply(LoginModel loginModel) throws Exception {
+                    public Resource<LoginModel> apply(LoginModel loginModel) throws Exception {
                         if(loginModel != null){
-                            if(loginModel.isFailure()){
-
-                            }
-                            else {
-                                saveLoginData(loginModel.getSession_id());
-
-                            }
+                            return Resource.success(loginModel);
                         }
-                        else {
-
-                        }
-                        return null;
+                        return Resource.error("Something went wrong",null);
                     }
                 })
                 .subscribeOn(Schedulers.io())
         );
-    }
+        requestToken.addSource(resourceLiveData, new Observer<Resource<LoginModel>>() {
+            @Override
+            public void onChanged(Resource<LoginModel> loginModelResource) {
+                requestToken.setValue(loginModelResource);
+                requestToken.removeSource(resourceLiveData);
+            }
+        });
+        return requestToken;
+   }
 
-    private void saveLoginData(String session_id) {
-
-    }
-
-
-
-    public LiveData<LoginResource<LoginModel>> validateLogin(String username, String password, String requestTokenBody) {
-        return LiveDataReactiveStreams.fromPublisher(loginApi.getLoginValidate(DEVELOPER_KEY, new LoginRequestBody(username, password, requestTokenBody))
+   public LiveData<Resource<LoginModel>> observeValidateLogin(LoginRequestBody loginRequestBody){
+        loginvalidate = new MediatorLiveData<>();
+        loginvalidate.setValue(Resource.loading(null));
+        final LiveData<Resource<LoginModel>> resourceLiveData = LiveDataReactiveStreams.fromPublisher(
+                loginApi.getLoginValidate(DEVELOPER_KEY,loginRequestBody)
                 .onErrorReturn(new Function<Throwable, LoginModel>() {
                     @Override
                     public LoginModel apply(Throwable throwable) throws Exception {
-                        LoginModel loginModel = new LoginModel();
-                        loginModel.setStatus_code(30);
-                        loginModel.setFailure(true);
                         return null;
                     }
                 })
-                .map(new Function<LoginModel, LoginResource<LoginModel>>() {
+                .map(new Function<LoginModel, Resource<LoginModel>>() {
                     @Override
-                    public LoginResource<LoginModel> apply(LoginModel loginModel) throws Exception {
+                    public Resource<LoginModel> apply(LoginModel loginModel) throws Exception {
                         if(loginModel != null){
-                            if(loginModel.getStatus_code() == 30){
-
-                            }
-                            else if(loginModel.isFailure()){
-
-                            }
-                            else {
-                                getSessionId(requestTokenBody);
-                            }
+                            return Resource.success(loginModel);
                         }
-                        else {
-
-                        }
-                        return null;
+                        return Resource.error("Something went wrong",loginModel);
                     }
                 })
                 .subscribeOn(Schedulers.io())
         );
-    }
+        loginvalidate.addSource(resourceLiveData, new Observer<Resource<LoginModel>>() {
+            @Override
+            public void onChanged(Resource<LoginModel> loginModelResource) {
+                loginvalidate.setValue(loginModelResource);
+                loginvalidate.removeSource(resourceLiveData);
+            }
+        });
+        return loginvalidate;
+   }
 
+   public LiveData<Resource<LoginModel>> observeSessionId(RequestTokenBody requestTokenBody){
+        sessionId = new MediatorLiveData<>();
+        sessionId.setValue(Resource.loading(null));
+        final LiveData<Resource<LoginModel>> resourceLiveData = LiveDataReactiveStreams.fromPublisher(
+                loginApi.getSession(DEVELOPER_KEY,requestTokenBody)
+                .onErrorReturn(new Function<Throwable, LoginModel>() {
+                    @Override
+                    public LoginModel apply(Throwable throwable) throws Exception {
+                        return null;
+                    }
+                })
+                .map(new Function<LoginModel, Resource<LoginModel>>() {
+                    @Override
+                    public Resource<LoginModel> apply(LoginModel loginModel) throws Exception {
+                        if(loginModel != null){
+                            return Resource.success(loginModel);
+                        }
+                        return Resource.error("Something went wrong",loginModel);
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+        );
+        sessionId.addSource(resourceLiveData, new Observer<Resource<LoginModel>>() {
+            @Override
+            public void onChanged(Resource<LoginModel> loginModelResource) {
+                sessionId.setValue(loginModelResource);
+                sessionId.removeSource(resourceLiveData);
+            }
+        });
+        return sessionId;
+   }
 
 }

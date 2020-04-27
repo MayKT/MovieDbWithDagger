@@ -1,17 +1,13 @@
 package com.mkttestprojects.moviedbwithdagger.ui.main.profile;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
-import androidx.lifecycle.LifecycleOwner;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.facebook.AccessToken;
@@ -22,26 +18,19 @@ import com.facebook.FacebookSdk;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
-import com.google.android.gms.common.SignInButton;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.android.material.textfield.TextInputEditText;
-import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FacebookAuthProvider;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.mkttestprojects.moviedbwithdagger.BaseFragment;
+import com.mkttestprojects.moviedbwithdagger.common.BaseFragment;
 import com.mkttestprojects.moviedbwithdagger.R;
+import com.mkttestprojects.moviedbwithdagger.models.AccountModel;
 import com.mkttestprojects.moviedbwithdagger.ui.firebaselogin.FirebaseLoginActivity;
+import com.mkttestprojects.moviedbwithdagger.ui.login.LoginActivity;
+import com.mkttestprojects.moviedbwithdagger.ui.main.MainActivity;
+import com.mkttestprojects.moviedbwithdagger.ui.main.Resource;
+import com.mkttestprojects.moviedbwithdagger.util.SharePreferenceHelper;
 import com.mkttestprojects.moviedbwithdagger.viewmodels.ViewModelProviderFactory;
-
-import java.util.concurrent.Executor;
 
 import javax.inject.Inject;
 
 import butterknife.BindView;
-import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ProfileFragment extends BaseFragment implements View.OnClickListener {
 
@@ -53,10 +42,26 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
     @BindView(R.id.item_map)
     CardView cvMap;
 
+    @BindView(R.id.btn_logout)
+    Button btnLogout;
+
+    @BindView(R.id.tv_name)
+    TextView tvName;
+
+    @BindView(R.id.btn_singin)
+    Button btnSignin;
+
+    @BindView(R.id.layout_already_signin)
+    ConstraintLayout layoutAlreadySignin;
+
     @Inject
     ViewModelProviderFactory providerFactory;
 
     private ProfileFragmentViewModel viewModel;
+
+    private SharePreferenceHelper mSharePreference;
+
+    private String sessionId;
 
     @Override
     protected int getLayoutResource() {
@@ -68,14 +73,51 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
 
         viewModel = new ViewModelProvider(getActivity(),providerFactory).get(ProfileFragmentViewModel.class);
 
+        mSharePreference = new SharePreferenceHelper(getContext());
+
+        sessionId = mSharePreference.getSessionId();
+
         init();
 
         cvGmail.setOnClickListener(this);
         cvMap.setOnClickListener(this);
-
+        btnLogout.setOnClickListener(this);
+        btnSignin.setOnClickListener(this);
     }
 
     private void init() {
+
+        if(mSharePreference.isLogin()){
+
+            btnSignin.setVisibility(View.GONE);
+            layoutAlreadySignin.setVisibility(View.VISIBLE);
+            subscribeAccount(sessionId);
+        }
+        else {
+            btnSignin.setVisibility(View.VISIBLE);
+            layoutAlreadySignin.setVisibility(View.GONE);
+        }
+    }
+
+    private void subscribeAccount(String sessionId) {
+        viewModel.observeAccountBySessionId(sessionId).observe(this, new Observer<Resource<AccountModel>>() {
+            @Override
+            public void onChanged(Resource<AccountModel> accountModelResource) {
+                if(accountModelResource != null){
+                    switch (accountModelResource.status){
+                        case LOADING:
+
+                            break;
+                        case SUCCESS:
+                            tvName.setText(accountModelResource.data.getUsername());
+                            break;
+                        case ERROR:
+
+                            break;
+                    }
+                }
+            }
+        });
     }
 
     @Override
@@ -86,6 +128,13 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
                 break;
             case R.id.item_map:
 
+                break;
+            case R.id.btn_singin :
+                startActivity(LoginActivity.LoginActivityIntent(getContext()));
+                break;
+            case R.id.btn_logout:
+                mSharePreference.logoutSharePreference();
+                startActivity(MainActivity.MainActivityIntent(getContext()));
                 break;
         }
 

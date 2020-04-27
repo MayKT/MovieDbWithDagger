@@ -10,6 +10,10 @@ import androidx.lifecycle.ViewModel;
 
 import com.mkttestprojects.moviedbwithdagger.R;
 import com.mkttestprojects.moviedbwithdagger.models.MovieListModel;
+import com.mkttestprojects.moviedbwithdagger.models.RateRequestBody;
+import com.mkttestprojects.moviedbwithdagger.models.RatingModel;
+import com.mkttestprojects.moviedbwithdagger.models.WatchListModel;
+import com.mkttestprojects.moviedbwithdagger.models.WatchListRequestBody;
 import com.mkttestprojects.moviedbwithdagger.network.moviedetail.MovieDetailApi;
 import com.mkttestprojects.moviedbwithdagger.ui.main.Resource;
 
@@ -27,6 +31,8 @@ public class MovieDetailViewModel extends ViewModel {
 
     private MediatorLiveData<Resource<MovieListModel>> moviedetails;
     private MediatorLiveData<Resource<MovieListModel>> similarmovies;
+    private MediatorLiveData<Resource<WatchListModel>> watchlist;
+    private MediatorLiveData<Resource<RatingModel>> rating;
 
     @Inject
     public MovieDetailViewModel(MovieDetailApi movieDetailApi) {
@@ -104,5 +110,69 @@ public class MovieDetailViewModel extends ViewModel {
             });
         }
         return similarmovies;
+    }
+
+    public LiveData<Resource<WatchListModel>> observeWatchListPostData(String sessionId, WatchListRequestBody watchListRequestBody){
+        watchlist= new MediatorLiveData<>();
+        watchlist.setValue(Resource.loading(null));
+        final LiveData<Resource<WatchListModel>> resourceLiveData = LiveDataReactiveStreams.fromPublisher(
+                movieDetailApi.addMoiveToWatchList(DEVELOPER_KEY,sessionId,watchListRequestBody)
+                .onErrorReturn(new Function<Throwable, WatchListModel>() {
+                    @Override
+                    public WatchListModel apply(Throwable throwable) throws Exception {
+                        return null;
+                    }
+                })
+                .map(new Function<WatchListModel, Resource<WatchListModel>>() {
+                    @Override
+                    public Resource<WatchListModel> apply(WatchListModel watchListModel) throws Exception {
+                        if(watchListModel == null){
+                            return Resource.error("Something went wrong",null);
+                        }
+                        return Resource.success(watchListModel);
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+        );
+        watchlist.addSource(resourceLiveData, new Observer<Resource<WatchListModel>>() {
+            @Override
+            public void onChanged(Resource<WatchListModel> watchListModelResource) {
+                watchlist.setValue(watchListModelResource);
+                watchlist.removeSource(resourceLiveData);
+            }
+        });
+        return watchlist;
+    }
+
+    public LiveData<Resource<RatingModel>> observeRatingPostData(String sessionId, int movieId, RateRequestBody rateRequestBody){
+        rating = new MediatorLiveData<>();
+        rating.setValue(Resource.loading(null));
+        final LiveData<Resource<RatingModel>> resourceLiveData = LiveDataReactiveStreams.fromPublisher(
+                movieDetailApi.rateMovie(movieId,DEVELOPER_KEY,sessionId,rateRequestBody)
+                .onErrorReturn(new Function<Throwable, RatingModel>() {
+                    @Override
+                    public RatingModel apply(Throwable throwable) throws Exception {
+                        return null;
+                    }
+                })
+                .map(new Function<RatingModel, Resource<RatingModel>>() {
+                    @Override
+                    public Resource<RatingModel> apply(RatingModel ratingModel) throws Exception {
+                        if(ratingModel == null){
+                            return Resource.error("Something went wrong",null);
+                        }
+                        return Resource.success(ratingModel);
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+        );
+        rating.addSource(resourceLiveData, new Observer<Resource<RatingModel>>() {
+            @Override
+            public void onChanged(Resource<RatingModel> ratingModelResource) {
+                rating.setValue(ratingModelResource);
+                rating.removeSource(resourceLiveData);
+            }
+        });
+        return rating;
     }
 }

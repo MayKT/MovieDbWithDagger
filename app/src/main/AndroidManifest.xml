@@ -43,6 +43,7 @@
         <activity android:name=".ui.moviedetail.MovieDetailActivity"></activity>
         <activity android:name=".ui.movietrailer.PlayMovieTrailerActivity"></activity>
         <activity android:name=".ui.firebaselogin.FirebaseLoginActivity"></activity>
+        <activity android:name=".ui.firebasemain.FireBaseMainActivity"></activity>
     </application>
 
 </manifest>

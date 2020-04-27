@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
-import com.mkttestprojects.moviedbwithdagger.BaseAdapter;
+import com.mkttestprojects.moviedbwithdagger.common.BaseAdapter;
 import com.mkttestprojects.moviedbwithdagger.R;
 import com.mkttestprojects.moviedbwithdagger.models.MovieListInfo;
 import com.mkttestprojects.moviedbwithdagger.ui.moviedetail.MovieDetailActivity;

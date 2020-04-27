@@ -1,7 +1,5 @@
 package com.mkttestprojects.moviedbwithdagger.models;
 
-import com.mkttestprojects.moviedbwithdagger.Pageable;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;

@@ -1,6 +1,8 @@
 package com.mkttestprojects.moviedbwithdagger.di.main;
 
+import com.mkttestprojects.moviedbwithdagger.di.main.mylist.MyListScope;
 import com.mkttestprojects.moviedbwithdagger.network.main.MainApi;
+import com.mkttestprojects.moviedbwithdagger.network.main.mylist.MyListApi;
 import com.mkttestprojects.moviedbwithdagger.ui.main.home.VerticalMoiveListAdapter;
 
 import dagger.Module;
@@ -20,6 +22,12 @@ public class MainModule {
     @Provides
     static MainApi proviedMainApi(Retrofit retrofit){
         return retrofit.create(MainApi.class);
+    }
+
+    @MainScope
+    @Provides
+    static MyListApi provideMyListApi(Retrofit retrofit){
+        return retrofit.create(MyListApi.class);
     }
 
 }

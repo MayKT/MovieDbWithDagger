@@ -6,14 +6,17 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -23,15 +26,21 @@ import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.jgabrielfreitas.core.BlurImageView;
-import com.mkttestprojects.moviedbwithdagger.BaseActivity;
+import com.mkttestprojects.moviedbwithdagger.common.BaseActivity;
 import com.mkttestprojects.moviedbwithdagger.R;
 import com.mkttestprojects.moviedbwithdagger.custom_control.BlurImage;
 import com.mkttestprojects.moviedbwithdagger.custom_control.MyanProgressDialog;
 import com.mkttestprojects.moviedbwithdagger.models.MovieListInfo;
 import com.mkttestprojects.moviedbwithdagger.models.MovieListModel;
+import com.mkttestprojects.moviedbwithdagger.models.RateRequestBody;
+import com.mkttestprojects.moviedbwithdagger.models.RatingModel;
+import com.mkttestprojects.moviedbwithdagger.models.WatchListModel;
+import com.mkttestprojects.moviedbwithdagger.models.WatchListRequestBody;
 import com.mkttestprojects.moviedbwithdagger.ui.MovieAdapter;
+import com.mkttestprojects.moviedbwithdagger.ui.login.LoginActivity;
 import com.mkttestprojects.moviedbwithdagger.ui.main.Resource;
 import com.mkttestprojects.moviedbwithdagger.ui.movietrailer.PlayMovieTrailerActivity;
+import com.mkttestprojects.moviedbwithdagger.util.SharePreferenceHelper;
 import com.mkttestprojects.moviedbwithdagger.viewmodels.ViewModelProviderFactory;
 
 import javax.inject.Inject;
@@ -40,7 +49,7 @@ import butterknife.BindView;
 
 import static com.mkttestprojects.moviedbwithdagger.util.AppConstant.BASE_IMG_URL;
 
-public class MovieDetailActivity extends BaseActivity {
+public class MovieDetailActivity extends BaseActivity implements View.OnClickListener {
 
     private static final String TAG = "MovieDetailActivity";
 
@@ -100,6 +109,10 @@ public class MovieDetailActivity extends BaseActivity {
 
     private String moviePosterpath;
 
+    private String sessionId;
+
+    private SharePreferenceHelper mSharePreference;
+
     public static Intent MovieDetailActivityIntent(Context context, int movieId) {
         Intent intent = new Intent(context, MovieDetailActivity.class);
         mmovieId = movieId;
@@ -117,6 +130,8 @@ public class MovieDetailActivity extends BaseActivity {
 //        setupToolbarText("");
         movieDetailViewModel = new ViewModelProvider(this, providerFactory).get(MovieDetailViewModel.class);
         mdialog = new MyanProgressDialog(this);
+        mSharePreference = new SharePreferenceHelper(this);
+        sessionId = mSharePreference.getSessionId();
         init();
     }
 
@@ -147,12 +162,11 @@ public class MovieDetailActivity extends BaseActivity {
         getMovieDetails(mmovieId);
         getSimilarMovies(mmovieId);
 
-        layoutPlay.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(PlayMovieTrailerActivity.PlayMovieTrailerIntent(MovieDetailActivity.this,mmovieId));
-            }
-        });
+        layoutPlay.setOnClickListener(this);
+
+        layoutMylist.setOnClickListener(this);
+
+        layoutRating.setOnClickListener(this);
     }
 
     private void getSimilarMovies(int mmovieId) {
@@ -215,11 +229,11 @@ public class MovieDetailActivity extends BaseActivity {
                             hideloading();
                             requestManager
                                     .asBitmap()
-                                    .load(BASE_IMG_URL+ movieListModelResource.data.getPosterpath())
+                                    .load(BASE_IMG_URL + movieListModelResource.data.getPosterpath())
                                     .into(new CustomTarget<Bitmap>() {
                                         @Override
                                         public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-                                            Bitmap bitmapImage= BlurImage.fastblur(resource, (float) 0.08,5);
+                                            Bitmap bitmapImage = BlurImage.fastblur(resource, (float) 0.08, 5);
 //                        movieDetailLayout.setBackground(new BitmapDrawable(getResources(), bitmapImage));
 
                                             requestManager
@@ -255,6 +269,119 @@ public class MovieDetailActivity extends BaseActivity {
                 }
             }
         });
+
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.layout_play:
+                startActivity(PlayMovieTrailerActivity.PlayMovieTrailerIntent(MovieDetailActivity.this, mmovieId));
+                break;
+            case R.id.layout_mylist:
+                addToWatchList(sessionId, mmovieId);
+                break;
+            case R.id.layout_rating:
+                setRating(sessionId, mmovieId);
+                break;
+
+        }
+    }
+
+    private void addToWatchList(String sessionId, int mmovieId) {
+        if (mSharePreference.isLogin()) {
+            movieDetailViewModel.observeWatchListPostData(sessionId, new WatchListRequestBody("movie", mmovieId, true))
+                    .observe(this, new Observer<Resource<WatchListModel>>() {
+                        @Override
+                        public void onChanged(Resource<WatchListModel> watchListModelResource) {
+                            if (watchListModelResource != null) {
+                                switch (watchListModelResource.status) {
+                                    case LOADING:
+                                        mdialog.showDialog();
+                                        break;
+                                    case SUCCESS:
+                                        mdialog.hideDialog();
+                                        showToastMsg("Successfully added to watchlist");
+                                        break;
+                                    case ERROR:
+                                        mdialog.hideDialog();
+                                        showToastMsg("Error adding to watchlist");
+                                        break;
+                                }
+                            }
+                        }
+                    });
+        } else {
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+            alertDialogBuilder.setMessage("You must login to add to watchlist");
+            alertDialogBuilder.setPositiveButton("OK",
+                    (arg0, arg1) -> startActivity(LoginActivity.LoginActivityIntent(this)));
+
+            alertDialogBuilder.setNegativeButton("Cancel", (dialog, which) -> {
+                dialog.dismiss();
+            });
+            AlertDialog alertDialog = alertDialogBuilder.create();
+            alertDialog.show();
+        }
+    }
+
+    private void showToastMsg(String msg) {
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+    }
+
+
+    private void setRating(String sessionId, int mmovieId) {
+        if (mSharePreference.isLogin()) {
+            AlertDialog.Builder popupDialog = new AlertDialog.Builder(this);
+            LayoutInflater inflater = getLayoutInflater();
+            View dialoglayout = inflater.inflate(R.layout.rating_dialog, null);
+            RatingBar ratingBar = dialoglayout.findViewById(R.id.rb_rating);
+            popupDialog.setView(dialoglayout);
+            popupDialog.setTitle("Rating");
+            popupDialog.setPositiveButton("Rate", (dialogInterface, i) -> {
+
+                rbMovieRating.setVisibility(View.VISIBLE);
+                rbMovieRating.setRating(ratingBar.getRating());
+
+                RateRequestBody rateRequestBody = new RateRequestBody(ratingBar.getRating());
+
+                movieDetailViewModel.observeRatingPostData(sessionId, mmovieId, rateRequestBody).observe(this, new Observer<Resource<RatingModel>>() {
+                    @Override
+                    public void onChanged(Resource<RatingModel> ratingModelResource) {
+                        if (ratingModelResource != null) {
+                            switch (ratingModelResource.status) {
+                                case LOADING:
+                                    mdialog.showDialog();
+                                    break;
+                                case SUCCESS:
+                                    mdialog.hideDialog();
+                                    showToastMsg("Rating successful");
+                                    break;
+                                case ERROR:
+                                    mdialog.hideDialog();
+                                    showToastMsg("Error rating");
+                                    break;
+                            }
+                        }
+                    }
+                });
+
+            });
+            popupDialog.show();
+        } else {
+
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+            alertDialogBuilder.setMessage("You must login to add to watchlist");
+            alertDialogBuilder.setPositiveButton("OK",
+                    (arg0, arg1) -> startActivity(LoginActivity.LoginActivityIntent(this)));
+
+            alertDialogBuilder.setNegativeButton("Cancel", (dialog, which) -> {
+
+            });
+            AlertDialog alertDialog = alertDialogBuilder.create();
+            alertDialog.show();
+
+        }
 
     }
 }

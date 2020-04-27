@@ -28,7 +28,6 @@ public class SearchFragmentViewModel extends ViewModel {
     }
 
     public LiveData<Resource<MovieListModel>> observeSearchResult(String query){
-        if(searchResults == null){
             searchResults = new MediatorLiveData<>();
             searchResults.setValue(Resource.loading(null));
             final LiveData<Resource<MovieListModel>> resourceLiveData = LiveDataReactiveStreams.fromPublisher(
@@ -62,7 +61,6 @@ public class SearchFragmentViewModel extends ViewModel {
                     searchResults.removeSource(resourceLiveData);
                 }
             });
-        }
         return searchResults;
     }
 

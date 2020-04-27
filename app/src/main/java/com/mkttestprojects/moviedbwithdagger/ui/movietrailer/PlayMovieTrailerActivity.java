@@ -8,7 +8,7 @@ import android.util.Log;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.mkttestprojects.moviedbwithdagger.BaseActivity;
+import com.mkttestprojects.moviedbwithdagger.common.BaseActivity;
 import com.mkttestprojects.moviedbwithdagger.R;
 import com.mkttestprojects.moviedbwithdagger.models.MovieTrailerModel;
 import com.mkttestprojects.moviedbwithdagger.ui.main.Resource;

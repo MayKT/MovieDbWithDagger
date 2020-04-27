@@ -1,8 +1,5 @@
 package com.mkttestprojects.moviedbwithdagger.util;
 
-/**
- * Created by kaungkhantsoe on 2019-10-19.
- **/
 public class AppConstant {
 
     public static final String BASE_URL = "https://api.themoviedb.org/3/";
@@ -11,4 +8,5 @@ public class AppConstant {
 
     public static final String ZG_FONT = "zg";
     public static final String MM3_FONT = "mm3";
+
 }

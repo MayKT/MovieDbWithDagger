@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel;
 import com.mkttestprojects.moviedbwithdagger.di.ViewModelKey;
 import com.mkttestprojects.moviedbwithdagger.ui.login.LoginViewModel;
 import com.mkttestprojects.moviedbwithdagger.ui.main.home.HomeFragmentViewModel;
+import com.mkttestprojects.moviedbwithdagger.ui.main.mylist.MyListFragmentViewModel;
 import com.mkttestprojects.moviedbwithdagger.ui.main.profile.ProfileFragmentViewModel;
 import com.mkttestprojects.moviedbwithdagger.ui.main.search.SearchFragmentViewModel;
 
@@ -31,4 +32,8 @@ public abstract class MainViewModelModule {
     public abstract ViewModel bindProfileFragmentViewModel(ProfileFragmentViewModel profileFragmentViewModel);
 
 
+    @Binds
+    @IntoMap
+    @ViewModelKey(MyListFragmentViewModel.class)
+    public abstract ViewModel bindMyListFragmentViewModel(MyListFragmentViewModel myListFragmentViewModel);
 }

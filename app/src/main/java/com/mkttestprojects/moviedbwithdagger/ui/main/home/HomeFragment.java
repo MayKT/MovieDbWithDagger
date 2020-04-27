@@ -1,5 +1,6 @@
 package com.mkttestprojects.moviedbwithdagger.ui.main.home;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
@@ -9,7 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.mkttestprojects.moviedbwithdagger.BaseFragment;
+import com.mkttestprojects.moviedbwithdagger.common.BaseFragment;
 import com.mkttestprojects.moviedbwithdagger.R;
 import com.mkttestprojects.moviedbwithdagger.models.MovieListInfo;
 import com.mkttestprojects.moviedbwithdagger.models.MovieListModel;
@@ -119,6 +120,7 @@ public class HomeFragment extends BaseFragment implements SwipeRefreshLayout.OnR
                             break;
                         case ERROR:
                             Log.e(TAG, "onChanged: case error" );
+                            showDialogMsg("Something went wrong");
                             Toast.makeText(getContext(), "Error...", Toast.LENGTH_SHORT).show();
                             break;
                         default:
@@ -127,6 +129,17 @@ public class HomeFragment extends BaseFragment implements SwipeRefreshLayout.OnR
                 }
             }
         });
+    }
+
+    private void showDialogMsg(String msg) {
+        new AlertDialog.Builder(getContext())
+                .setMessage(msg)
+                .setPositiveButton(
+                        "Ok",
+                        (dialog, whichButton) -> {
+                            dialog.dismiss();
+                        })
+                .show();
     }
 
 
@@ -151,6 +164,7 @@ public class HomeFragment extends BaseFragment implements SwipeRefreshLayout.OnR
                             break;
                         case ERROR:
                             Log.e(TAG, "onChanged: case error" );
+                            showDialogMsg("Something went wrong");
                             Toast.makeText(getContext(), "Error...", Toast.LENGTH_SHORT).show();
                             break;
                         default:
@@ -181,6 +195,7 @@ public class HomeFragment extends BaseFragment implements SwipeRefreshLayout.OnR
                             break;
                         case ERROR:
                             Log.e(TAG, "onChanged: case error" );
+                            showDialogMsg("Something went wrong");
                             Toast.makeText(getContext(), "Error...", Toast.LENGTH_SHORT).show();
                             break;
                         default:
@@ -211,6 +226,7 @@ public class HomeFragment extends BaseFragment implements SwipeRefreshLayout.OnR
                             break;
                         case ERROR:
                             Log.e(TAG, "onChanged: case error" );
+                            showDialogMsg("Something went wrong");
                             Toast.makeText(getContext(), "Error...", Toast.LENGTH_SHORT).show();
                             break;
                         default:
