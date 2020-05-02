@@ -89,6 +89,9 @@ public class MovieDetailActivity extends BaseActivity implements View.OnClickLis
     @BindView(R.id.rb_movierating)
     RatingBar rbMovieRating;
 
+    @BindView(R.id.tv_more_like_this)
+    TextView tvMoreLikeThis;
+
     @Inject
     ViewModelProviderFactory providerFactory;
 
@@ -180,15 +183,25 @@ public class MovieDetailActivity extends BaseActivity implements View.OnClickLis
                             break;
                         case SUCCESS:
                             adapter.clear();
-                            for (MovieListInfo movieListInfo : movieListModelResource.data.getResults()) {
-                                adapter.add(movieListInfo);
+                            if(movieListModelResource.data.getResults().size() > 0){
+                                tvMoreLikeThis.setVisibility(View.VISIBLE);
+                                rvSimilarMovie.setVisibility(View.VISIBLE);
+                                for (MovieListInfo movieListInfo : movieListModelResource.data.getResults()) {
+                                    adapter.add(movieListInfo);
+                                }
                             }
+                            else {
+                                rvSimilarMovie.setVisibility(View.GONE);
+                                tvMoreLikeThis.setVisibility(View.GONE);
+                            }
+
                             break;
                         case ERROR:
                             Log.e(TAG, "onChanged: error");
                             break;
                     }
                 }
+
             }
         });
     }

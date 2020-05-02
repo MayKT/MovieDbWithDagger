@@ -24,6 +24,7 @@ import com.mkttestprojects.moviedbwithdagger.models.AccountModel;
 import com.mkttestprojects.moviedbwithdagger.ui.firebaselogin.FirebaseLoginActivity;
 import com.mkttestprojects.moviedbwithdagger.ui.login.LoginActivity;
 import com.mkttestprojects.moviedbwithdagger.ui.main.MainActivity;
+import com.mkttestprojects.moviedbwithdagger.ui.main.MapsActivity;
 import com.mkttestprojects.moviedbwithdagger.ui.main.Resource;
 import com.mkttestprojects.moviedbwithdagger.util.SharePreferenceHelper;
 import com.mkttestprojects.moviedbwithdagger.viewmodels.ViewModelProviderFactory;
@@ -127,7 +128,7 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
                 startActivity(FirebaseLoginActivity.FirebaseLoginActivityIntent(getContext()));
                 break;
             case R.id.item_map:
-
+                startActivity(MapsActivity.MapsActivityIntent(getContext()));
                 break;
             case R.id.btn_singin :
                 startActivity(LoginActivity.LoginActivityIntent(getContext()));
